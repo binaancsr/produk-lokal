@@ -1,0 +1,20 @@
+PERBAIKAN FOTO — MIFA LOCAL PRENEUR V6
+
+Code.gs V3 memperbaiki pencarian foto berdasarkan path di kolom K.
+Jika nilainya web_produk_Images/nama-file.jpg, script mencari file di folder
+web_produk_Images terlebih dahulu dan mengirim URL thumbnail Google Drive.
+
+CARA PEMASANGAN:
+1. Backup Code.gs yang sekarang.
+2. Ganti isi Code.gs dengan Code_GS_Community_Development_Portal_v3.gs.
+3. Save > Deploy > Manage deployments > Edit > New version > Deploy.
+   Gunakan deployment Web App yang sama agar URL portal lama tidak berubah.
+4. ZIP V6 berisi frontend yang memuat foto dari URL API dan menampilkan
+   pesan yang jelas bila file tidak bisa diakses.
+5. Tes URL .../exec?sheet=web_produk. Field "Foto" harus berupa URL thumbnail
+   Google Drive, bukan lagi path folder.
+
+PENTING UNTUK AKSES PUBLIK:
+Agar pengunjung website dapat melihat gambar, folder web_produk_Images
+atau file foto di dalamnya harus diatur ke General access:
+Anyone with the link — Viewer. Kode tidak mengubah izin berbagi secara otomatis.
