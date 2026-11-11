@@ -5,7 +5,20 @@ const demoProducts = [
  {section:"Hasil Tani & Budidaya",name:"Kelompok Lele Limbek",type:"Ikan lele hasil budidaya",location:"Krueng 7",owner:"Kelompok Budidaya",availability:"Tidak Tersedia",stock:"0 kg",description:"Informasi panen akan diperbarui secara berkala.",photo:"",admin:"6281234567890",facilitator:"6281234567891",coordinates:"4.1600,96.1400"},
  {section:"Hasil Tani & Budidaya",name:"Kebun Sayur Sejahtera",type:"Sayuran segar",location:"Peunaga Cut Ujong",owner:"Kelompok Tani",availability:"Tersedia",stock:"30 ikat",description:"",photo:"",admin:"6281234567890",facilitator:"",coordinates:"4.1550,96.1320"}
 ];
-const sectionMap={"Produk UMKM":"umkm","Produk Jasa":"jasa","Hasil Tani & Budidaya":"tani"};
+const sectionMap={
+ "produk umkm":"umkm",
+ "produk jasa":"jasa",
+ "jasa & layanan":"jasa",
+ "fashion & kerajinan":"fashion",
+ "peternakan / perikanan / pertanian":"tani",
+ "hasil tani & budidaya":"tani",
+ "bumg":"bumg",
+ "usaha bumg":"bumg",
+ "dll":"lainnya",
+ "produk lainnya":"lainnya"
+};
+const sectionLabels={umkm:"Produk UMKM",jasa:"Jasa & Layanan",fashion:"Fashion & Kerajinan",tani:"Hasil Tani & Budidaya",bumg:"Usaha BUMG",lainnya:"Binaan Lainnya"};
+const sectionKeys=Object.keys(sectionLabels);
 let products=[...demoProducts], activeProduct=null;
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
@@ -13,13 +26,23 @@ function normalize(v){return String(v??"").trim()}
 function escapeHtml(v){return normalize(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function icon(name){return `<i data-lucide="${name}"></i>`}
 function refreshIcons(){if(window.lucide)lucide.createIcons()}
-function sectionKey(p){let s=normalize(p.section);if(sectionMap[s])return sectionMap[s];let low=s.toLowerCase();if(low.includes("jasa"))return"jasa";if(low.includes("tani")||low.includes("budidaya")||low.includes("peternakan")||low.includes("perikanan")||low.includes("pertanian"))return"tani";return"umkm"}
+function sectionKey(p){
+ let s=normalize(p.section), low=s.toLowerCase();
+ if(sectionMap[low])return sectionMap[low];
+ if(low.includes("jasa"))return"jasa";
+ if(low.includes("fashion")||low.includes("kerajinan"))return"fashion";
+ if(low.includes("tani")||low.includes("budidaya")||low.includes("peternakan")||low.includes("perikanan")||low.includes("pertanian"))return"tani";
+ if(low.includes("bumg"))return"bumg";
+ if(low==="dll"||low.includes("lainnya"))return"lainnya";
+ return"umkm";
+}
+function sectionLabel(p){return sectionLabels[sectionKey(p)]||"Produk Lokal";}
 function isYes(v){return ["yes","ya","true","1"].includes(normalize(v).toLowerCase())}
 function productCard(p){
  const unavailable=/tidak tersedia|habis|kosong/i.test(p.availability);
  const hasContact=normalize(p.admin)||normalize(p.facilitator);
  const image=p.photo?`<img src="${escapeHtml(p.photo)}" alt="${escapeHtml(p.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=&quot;product-placeholder photo-error&quot; title=&quot;Periksa izin akses file foto di Google Drive&quot;>${icon("image-off")}<small>Foto belum dapat diakses</small></div>'">`:`<div class="product-placeholder photo-error">${icon("image-off")}<small>Foto belum diisi pada sheet</small></div>`;
- return `<article class="product-card"><div class="product-image">${image}<span class="product-category">${escapeHtml(p.section||"Produk Lokal")}</span></div><div class="product-content"><div class="product-type">${escapeHtml(p.type)}</div><h3>${escapeHtml(p.name)}</h3><div class="product-meta">
+ return `<article class="product-card"><div class="product-image">${image}<span class="product-category">${escapeHtml(sectionLabel(p))}</span></div><div class="product-content"><div class="product-type">${escapeHtml(p.type)}</div><h3>${escapeHtml(p.name)}</h3><div class="product-meta">
  <div class="meta-row">${icon("map-pin")}<span>${escapeHtml(p.location||"Lokasi belum dicantumkan")}</span></div>
  <div class="meta-row">${icon("user-round")}<span>${escapeHtml(p.owner||"Pemilik usaha")}</span></div>
  <div class="meta-row">${icon("circle-check")}<span class="availability ${unavailable?"no":"yes"}">${escapeHtml(p.availability||"Informasi belum tersedia")}</span></div>
@@ -33,19 +56,17 @@ function renderGrid(key,query=""){
  if(query){let q=query.toLowerCase();arr=arr.filter(p=>[p.name,p.type,p.location,p.owner].join(" ").toLowerCase().includes(q))}
  const target=key==="home"?"#homeProducts":`#grid-${key}`;
  $(target).innerHTML=arr.length?arr.map(productCard).join(""):emptyState();
- if(key!=="home"){const label=key==="umkm"?"Produk UMKM":key==="jasa"?"Produk Jasa":"Hasil Tani & Budidaya";$(`#result-${key}`).textContent=`${arr.length} ${label.toLowerCase()}`;}
+ if(key!=="home"){$(`#result-${key}`).textContent=`${arr.length} ${sectionLabels[key].toLowerCase()}`;}
  refreshIcons();
 }
 function renderAll(){
- renderGrid("home");["umkm","jasa","tani"].forEach(k=>renderGrid(k,$(`#search-${k}`)?.value||""));
- $("#count-umkm").textContent=products.filter(p=>sectionKey(p)==="umkm").length;
- $("#count-jasa").textContent=products.filter(p=>sectionKey(p)==="jasa").length;
- $("#count-tani").textContent=products.filter(p=>sectionKey(p)==="tani").length;
+ renderGrid("home");sectionKeys.forEach(k=>renderGrid(k,$(`#search-${k}`)?.value||""));
+ sectionKeys.forEach(k=>{const el=$(`#count-${k}`);if(el)el.textContent=products.filter(p=>sectionKey(p)===k).length;});
 }
 function showPage(key){
  $$(".page").forEach(p=>p.classList.toggle("active",p.id===`page-${key}`));
  $$(".nav-link").forEach(a=>a.classList.toggle("active",a.dataset.page===key));
- $("#crumb").textContent=key==="home"?"Home":key==="umkm"?"Produk UMKM":key==="jasa"?"Produk Jasa":"Hasil Tani & Budidaya";
+ $("#crumb").textContent=key==="home"?"Home":(sectionLabels[key]||"Home");
  $("#sidebar").classList.remove("open");window.scrollTo({top:0,behavior:"smooth"});
 }
 function waUrl(number,p){
@@ -102,7 +123,7 @@ document.addEventListener("click",e=>{
  const order=e.target.closest("[data-order]");if(order)openContact(Number(order.dataset.order));
  const map=e.target.closest("[data-map]");if(map){let v=map.dataset.map;let url=/^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(v)?`https://www.google.com/maps?q=${encodeURIComponent(v)}`:v.startsWith("http")?v:`https://www.google.com/maps?q=${encodeURIComponent(v)}`;window.open(url,"_blank","noopener")}
 });
-["umkm","jasa","tani"].forEach(k=>$(`#search-${k}`).addEventListener("input",e=>renderGrid(k,e.target.value)));
+sectionKeys.forEach(k=>$(`#search-${k}`).addEventListener("input",e=>renderGrid(k,e.target.value)));
 $("#menuToggle").addEventListener("click",()=>$("#sidebar").classList.toggle("open"));
 $("#modalClose").addEventListener("click",closeContact);
 $("#contactModal").addEventListener("click",e=>{if(e.target.id==="contactModal")closeContact()});

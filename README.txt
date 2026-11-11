@@ -109,3 +109,13 @@ KONFIGURASI DEPLOYMENT V7
 - Library Apps Script: https://script.google.com/macros/library/d/1EcjGF42RWDkMem6ycnQWT_LPhsohw3-OB14qDMYOr9PqJZniHNMBrA3M/6
 - Website mengambil data dari parameter sheet=web_produk.
 - Deployment baru menggunakan akun pemilik folder foto agar foto Google Drive dapat dibaca.
+
+
+UPDATE KATEGORI MIFA LOCAL PRENEUR
+- Produk UMKM -> Produk UMKM
+- Produk Jasa -> Jasa & Layanan
+- Fashion & Kerajinan -> Fashion & Kerajinan
+- Peternakan / Perikanan / Pertanian -> Hasil Tani & Budidaya
+- BUMG -> Usaha BUMG
+- dll -> Produk Lainnya
+Kategori dibaca dari kolom A (Tampil Web) pada sheet web_produk. API Google Apps Script tidak perlu diubah.

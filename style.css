@@ -15,3 +15,13 @@
 .banner-blue{background:linear-gradient(110deg,#F1E8D5,#F7F1E5)}
 .banner-green{background:linear-gradient(110deg,#EEE9D4,#F6F1E4)}
 .banner-icon{border:1px solid #D8C18F;box-shadow:0 5px 14px rgba(114,47,69,.06)}
+
+/* V9 category color refinement: soft blue for agriculture, soft lavender for BUMG */
+.cat-blue{background:linear-gradient(135deg,#EAF3F7,#DFEDF3);border-color:#A9C9D9;box-shadow:0 5px 16px rgba(71,127,155,.08)}
+.cat-blue .category-icon{color:#477F9B}
+.cat-blue .category-text strong{color:#477F9B}
+.cat-blue .cat-deco{color:#477F9B12}
+.cat-lavender{background:linear-gradient(135deg,#F0EAF6,#E9E1F1);border-color:#C5B5D8;box-shadow:0 5px 16px rgba(128,100,158,.08)}
+.cat-lavender .category-icon{color:#80649E}
+.cat-lavender .category-text strong{color:#80649E}
+.cat-lavender .cat-deco{color:#80649E12}
